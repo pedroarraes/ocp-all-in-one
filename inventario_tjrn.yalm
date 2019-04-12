@@ -1,0 +1,160 @@
+[OSEv3:children]
+masters
+nodes
+etcd
+glusterfs
+glusterfs_registry
+nfs
+
+[OSEv3:vars]
+timeout=60
+ansible_ssh_user=root
+ansible_become=true
+
+# ============================================
+# Variaveis Gerais
+# ============================================
+deployment_type=openshift-enterprise
+openshift_deployment_type=openshift-enterprise
+openshift_clock_enabled=true
+
+# ============================================
+# Configurações do Master
+# ============================================
+openshift_master_cluster_method=native
+openshift_master_cluster_hostname=master.ocp.intrajus.tjrn
+openshift_master_cluster_public_hostname=master.ocp.intrajus.tjrn
+openshift_master_default_subdomain=apps.ocp.intrajus.tjrn
+
+openshift_master_api_port=443
+openshift_master_console_port=443
+openshift_master_htpasswd_users={'admin': '$apr1$xySBCH36$Lzw6m81rKP/hIqJYbXUht0'}
+openshift_master_identity_providers=[{'name': 'htpasswd_auth', 'login': 'true', 'challenge': 'true', 'kind': 'HTPasswdPasswordIdentityProvider'}]
+
+# ============================================
+# Configurações do Docker
+# ============================================
+openshift_docker_options="--log-driver json-file --log-opt max-size=1M --log-opt max-file=3"
+
+# ===========================================
+# Metrics Efemero
+# ===========================================
+#openshift_metrics_install_metrics=true
+openshift_metrics_server_install=true
+
+# ============================================
+# Prometheus Operator
+# ============================================
+openshift_cluster_monitoring_operator_install=true
+
+# ============================================
+# Node Problem Detector
+# ============================================
+openshift_node_problem_detector_install=true
+
+# ===========================================
+# Logging
+# ===========================================
+openshift_logging_install_logging=true
+openshift_logging_es_nodeselector={"node-role.kubernetes.io/infra":"true"}
+
+# ===========================================
+# Service Catalog
+# ===========================================
+openshift_enable_service_catalog=true
+ansible_service_broker_install=true
+template_service_broker_install=true
+template_service_broker_selector={"node-role.kubernetes.io/infra":"true"}
+openshift_template_service_broker_namespaces=['openshift']
+ansible_service_broker_local_registry_whitelist=['.*-apb$']
+
+# ===========================================
+# NFS (?)
+# ===========================================
+openshift_enable_unsupported_configurations=true
+
+# ===========================================
+# Networking
+# ===========================================
+os_sdn_network_plugin_name='redhat/openshift-ovs-networkpolicy'
+
+# ===========================================
+# Registry
+# ===========================================
+openshift_hosted_registry_selector='node-role.kubernetes.io/infra=true'
+openshift_hosted_registry_storage_kind=glusterfs
+openshift_hosted_registry_storage_volume_size=80Gi
+openshift_hosted_registry_selector='node-role.kubernetes.io/infra=true'
+openshift_storage_glusterfs_registry_wipe=true
+#openshift_hosted_registry_storage_kind=nfs
+#openshift_hosted_registry_storage_access_modes=['ReadWriteMany']
+#openshift_hosted_registry_storage_nfs_directory=/exports
+#openshift_hosted_registry_storage_nfs_options='*(rw,root_squash)'
+#openshift_hosted_registry_storage_volume_name=registry
+#openshift_hosted_registry_storage_volume_size=40Gi
+
+
+# ===========================================
+# Cloudforms
+# ===========================================
+#openshift_cfme_install_app=true
+#openshift_management_install_beta=true
+#openshift_node_groups=[{'name': 'node-config-master', 'labels': ['node-role.kubernetes.io/master=true']}, {'name': 'node-config-infra', 'labels':['node-role.kubernetes.io/infra=true',]}, {'name': 'node-config-compute', 'labels': ['node-role.kubernetes.io/compute=true'], 'edits': [{ 'key': 'kubeletArguments.pods-per-core','value': ['20']}]}]
+
+
+# ===========================================
+# Gluster
+# ===========================================
+openshift_storage_glusterfs_namespace=app-storage
+openshift_storage_glusterfs_storageclass=true
+openshift_storage_glusterfs_storageclass_default=false
+openshift_storage_glusterfs_block_deploy=true
+openshift_storage_glusterfs_block_host_vol_size=100
+openshift_storage_glusterfs_block_storageclass=true
+openshift_storage_glusterfs_block_storageclass_default=false
+openshift_storage_glusterfs_wipe=true
+
+
+# ===========================================
+# 3.11 new stuff
+# ===========================================
+#oreg_url = "registry.access.redhat.com/openshift3/ose-${component}:${version}"
+oreg_url=registry.redhat.io/openshift3/ose-${component}:${version}
+oreg_auth_user='12133893|tjrn'
+oreg_auth_password='eyJhbGciOiJSUzUxMiJ9.eyJzdWIiOiI5ODdkN2U2OGE1NTY0MDE2YWI3ODk5NDQ2ZWQyN2NlNiJ9.OiKRAkoDpfDoiWTnOrTX-PPIXJ0ctg-CFXqBP0Y4PFVeB6K5lUaGrgQ80JB62qb1i2TzlIVT8I9Hicz2xG6kzXGiHaXmx3xWcffULrEXc4cGMkrAxESUEDn9RwwsuDzc4YAQR7uJPpCPpGpbFoDH5m8XLAroP4mFD5_OULf9C8-nk_DZd33xXO95ljaAf9vnvrUT4qnyqsu7WgDfzmhRA6ei4Rky0RnISGoptW2P9wB6OhX64fqi5l8EO2Y65TCotJibwRz-Guy3QRPTIkysIp8AMnbe0FN_QivxMV9CZqribVr2bTO6ICXKuyksXMyJzChozmMBwRYThhiph2o5nVuAm_VQOxkfEPC2DkFqLXDnCbFSPnrwb3S2Rd3a9p_dbpCo2eMKPWO_U6fHvtwjn8ckzsAwO4KAHNH2Zpu_GFAZPWB5VQLRiYUudmLHUZf4jEQ_Xh4MdPbVPR5gH8Jj0EbfPu2kZ7SxUd3kKSt5NxoNTDPsiPS_iR96qGiu9KKfAd8eImesR0_Fa2r5VpaacW1yzpB-H_IPCTqQBriLR1ZU_5eW91gt8api_lRWwI7CilGIVPnVzZueULnZYX8JjwtnrngNlU0jBA3t-COU0hfM37mVx27dOCON4ZP8_Pw2YFlSeaAVr68nsYr2Po_ozDwYlVQyH6bHL5EUt3bSlMA'
+openshift_additional_registry_credentials=[{'host':'registry.connect.redhat.com','user':'12133893|tjrn','password':'eyJhbGciOiJSUzUxMiJ9.eyJzdWIiOiI5ODdkN2U2OGE1NTY0MDE2YWI3ODk5NDQ2ZWQyN2NlNiJ9.OiKRAkoDpfDoiWTnOrTX-PPIXJ0ctg-CFXqBP0Y4PFVeB6K5lUaGrgQ80JB62qb1i2TzlIVT8I9Hicz2xG6kzXGiHaXmx3xWcffULrEXc4cGMkrAxESUEDn9RwwsuDzc4YAQR7uJPpCPpGpbFoDH5m8XLAroP4mFD5_OULf9C8-nk_DZd33xXO95ljaAf9vnvrUT4qnyqsu7WgDfzmhRA6ei4Rky0RnISGoptW2P9wB6OhX64fqi5l8EO2Y65TCotJibwRz-Guy3QRPTIkysIp8AMnbe0FN_QivxMV9CZqribVr2bTO6ICXKuyksXMyJzChozmMBwRYThhiph2o5nVuAm_VQOxkfEPC2DkFqLXDnCbFSPnrwb3S2Rd3a9p_dbpCo2eMKPWO_U6fHvtwjn8ckzsAwO4KAHNH2Zpu_GFAZPWB5VQLRiYUudmLHUZf4jEQ_Xh4MdPbVPR5gH8Jj0EbfPu2kZ7SxUd3kKSt5NxoNTDPsiPS_iR96qGiu9KKfAd8eImesR0_Fa2r5VpaacW1yzpB-H_IPCTqQBriLR1ZU_5eW91gt8api_lRWwI7CilGIVPnVzZueULnZYX8JjwtnrngNlU0jBA3t-COU0hfM37mVx27dOCON4ZP8_Pw2YFlSeaAVr68nsYr2Po_ozDwYlVQyH6bHL5EUt3bSlMA','test_image':'mongodb/enterprise-operator:0.3.2'}]
+
+openshift_examples_modify_imagestreams=true
+openshift_install_examples=true
+
+# ===========================================
+# Operator Lifecycle Manager
+# ===========================================
+openshift_enable_olm=true
+
+[masters]
+master.ocp.intrajus.tjrn
+
+[etcd]
+master.ocp.intrajus.tjrn
+
+[nodes]
+master.ocp.intrajus.tjrn openshift_node_group_name='node-config-master'
+ocp-infra-1.ocp.intrajus.tjrn openshift_node_group_name='node-config-infra'
+ocp-infra-2.ocp.intrajus.tjrn openshift_node_group_name='node-config-infra'
+ocp-infra-3.ocp.intrajus.tjrn openshift_node_group_name='node-config-infra'
+ocp-node-1.ocp.intrajus.tjrn openshift_node_group_name='node-config-compute'
+ocp-node-2.ocp.intrajus.tjrn openshift_node_group_name='node-config-compute'
+
+[glusterfs_registry]
+ocp-infra-1.ocp.intrajus.tjrn glusterfs_devices='[ "/dev/sdd" ]'
+ocp-infra-2.ocp.intrajus.tjrn glusterfs_devices='[ "/dev/sdd" ]'
+ocp-infra-3.ocp.intrajus.tjrn glusterfs_devices='[ "/dev/sdd" ]'
+
+[glusterfs]
+ocp-infra-1.ocp.intrajus.tjrn glusterfs_devices='[ "/dev/sdc" ]'
+ocp-infra-2.ocp.intrajus.tjrn glusterfs_devices='[ "/dev/sdc" ]'
+ocp-infra-3.ocp.intrajus.tjrn glusterfs_devices='[ "/dev/sdc" ]'
+
+[nfs]
+ocp-bastion.ocp.intrajus.tjrn
